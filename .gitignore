@@ -1,0 +1,6 @@
+Gopkg.lock
+vendor
+logs
+*.log
+*.exe
+debug
