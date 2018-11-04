@@ -10,13 +10,13 @@ import (
 	"github.com/jchprj/GeoOrderTest/mgr"
 )
 
-// ListHandler swagger:route POST /orders orders listHandler
+// ListHandler swagger:route GET /orders orders listHandler
 //
 // List orders.
 //
 // Responses:
-//    default: genericError
 //        200: listResponse
+//	  default: genericError
 func ListHandler(w http.ResponseWriter, r *http.Request) {
 	logrus.Info("listHandler")
 	pages := r.URL.Query()["page"]

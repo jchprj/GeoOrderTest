@@ -1,0 +1,222 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "http"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "Used for customer clients, then can place order between different places, take order, and list orders. Use Google Maps API to get the distance for the order.\n\nThe markdown API doc does not has responses which is a bug. The http server API doc is better.",
+    "title": "GeoOrderTest .",
+    "version": "0.1"
+  },
+  "paths": {
+    "/orders": {
+      "get": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "List orders.",
+        "operationId": "listHandler",
+        "parameters": [
+          {
+            "type": "string",
+            "x-go-name": "Page",
+            "description": "Page index from 1",
+            "name": "page",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "x-go-name": "Limit",
+            "description": "Order numbers per page, between 1 to 50",
+            "name": "limit",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/listResponse"
+          },
+          "default": {
+            "$ref": "#/responses/genericError"
+          }
+        }
+      },
+      "post": {
+        "description": "Request:\ndefault: placeRequest",
+        "tags": [
+          "orders"
+        ],
+        "summary": "Create an order with an origin and a destination.",
+        "operationId": "placeHandler",
+        "parameters": [
+          {
+            "name": "PlaceRequest",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/placeRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/placeResponse"
+          },
+          "default": {
+            "$ref": "#/responses/genericError"
+          }
+        }
+      },
+      "patch": {
+        "description": "Request:\ndefault: takeRequest",
+        "tags": [
+          "orders"
+        ],
+        "summary": "Take a order, will update order status.",
+        "operationId": "takeHandler",
+        "parameters": [
+          {
+            "name": "TakeRequest",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/takeRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/takeResponse"
+          },
+          "default": {
+            "$ref": "#/responses/genericError"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "PlaceResponse": {
+      "description": "This is used for returning a response with a single order as body",
+      "type": "object",
+      "title": "PlaceResponse response model",
+      "properties": {
+        "distance": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Distance"
+        },
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "ID"
+        },
+        "status": {
+          "type": "string",
+          "x-go-name": "Status"
+        }
+      },
+      "x-go-package": "github.com/jchprj/GeoOrderTest/models"
+    },
+    "placeRequest": {
+      "description": "It is used to describe the initial order request.",
+      "type": "object",
+      "title": "PlaceRequest Used when create new order.",
+      "required": [
+        "origin",
+        "destination"
+      ],
+      "properties": {
+        "destination": {
+          "description": "Destination latitude and longitude",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "Destination"
+        },
+        "origin": {
+          "description": "Origin latitude and longitude",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "Origin"
+        }
+      },
+      "x-go-name": "PlaceRequest",
+      "x-go-package": "github.com/jchprj/GeoOrderTest/models"
+    },
+    "takeRequest": {
+      "description": "Status should be \"TAKEN\"",
+      "type": "object",
+      "title": "TakeRequest Used when take an order.",
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "description": "status should be \"TAKEN\"",
+          "type": "string",
+          "x-go-name": "Status"
+        }
+      },
+      "x-go-name": "TakeRequest",
+      "x-go-package": "github.com/jchprj/GeoOrderTest/models"
+    }
+  },
+  "responses": {
+    "genericError": {
+      "description": "GenericError response model\nGenericError is the default error message that is generated.",
+      "headers": {
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "listResponse": {
+      "description": "ListResponse response model\n\nThis is used for returning a response with orders as body",
+      "headers": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PlaceResponse"
+          }
+        }
+      }
+    },
+    "placeResponse": {
+      "description": "PlaceResponse response model\n\nThis is used for returning a response with a single order as body",
+      "headers": {
+        "distance": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "takeResponse": {
+      "description": "TakeResponse Used as response when take an order.\nStatus will be \"SUCCESS\"",
+      "headers": {
+        "status": {
+          "type": "string",
+          "description": "status will be \"SUCCESS\"\n\nrequired: true"
+        }
+      }
+    }
+  }
+}

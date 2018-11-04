@@ -17,38 +17,31 @@ type Order struct {
 	TakenTime      time.Time `xorm:"takenTime"`
 }
 
+// GenericError response model
 // GenericError is the default error message that is generated.
-// For certain status codes there are more appropriate error structures.
 //
 // swagger:response genericError
 type GenericError struct {
 	Error string `json:"error"`
 }
 
-// PlaceRequest A Pet is the main product in the store.
-// It is used to describe the animals available in the store.
+// PlaceRequest Used when create new order.
+// It is used to describe the initial order request.
 //
 // swagger:model placeRequest
 type PlaceRequest struct {
-	// The name of the pet.
-	//
+	// Origin latitude and longitude
 	// required: true
-	// pattern: \w[\w-]+
-	// minimum length: 3
-	// maximum length: 50
 	Origin []string `json:"origin"`
 
-	// The photo urls for the pet.
-	// This only accepts jpeg or png images.
-	//
+	// Destination latitude and longitude
 	// required: true
-	// items pattern: \.(jpe?g|png)$
 	Destination []string `json:"destination"`
 }
 
-// PlaceParam request model
+// PlaceParams request model
 //
-// This is used for returning a response with a single order as body
+// This is used for request
 //
 // swagger:parameters placeHandler
 type PlaceParams struct {
@@ -66,4 +59,62 @@ type PlaceResponse struct {
 	ID       int64  `json:"id"`
 	Distance int    `json:"distance"`
 	Status   string `json:"status"`
+}
+
+// TakeParams request model
+//
+// This is used for request
+//
+// swagger:parameters takeHandler
+type TakeParams struct {
+	// in: body
+	// required: true
+	TakeRequest TakeRequest
+}
+
+// TakeRequest Used when take an order.
+// Status should be "TAKEN"
+//
+// swagger:model takeRequest
+type TakeRequest struct {
+	// status should be "TAKEN"
+	//
+	// required: true
+	Status string `json:"status"`
+}
+
+// TakeResponse Used as response when take an order.
+// Status will be "SUCCESS"
+//
+// swagger:response takeResponse
+type TakeResponse struct {
+	// status will be "SUCCESS"
+	//
+	// required: true
+	Status string `json:"status"`
+}
+
+// ListParams request model
+//
+// This is used for request
+//
+// swagger:parameters listHandler
+type ListParams struct {
+	// Page index from 1
+	// in: path
+	// required: true
+	Page string `json:"page"`
+	// Order numbers per page, between 1 to 50
+	// in: path
+	// required: true
+	Limit string `json:"limit"`
+}
+
+// ListResponse response model
+//
+// This is used for returning a response with orders as body
+//
+// swagger:response listResponse
+type ListResponse struct {
+	List []PlaceResponse `json:"list"`
 }

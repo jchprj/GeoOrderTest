@@ -11,7 +11,7 @@ import (
 	"github.com/jchprj/GeoOrderTest/mgr"
 )
 
-// TakeHandler swagger:route POST /orders orders takeHandler
+// TakeHandler swagger:route PATCH /orders orders takeHandler
 //
 // Take a order, will update order status.
 //
