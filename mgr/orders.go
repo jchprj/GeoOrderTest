@@ -3,7 +3,6 @@ package mgr
 import (
 	"errors"
 	"net/http"
-	"sync"
 	"time"
 
 	"github.com/jchprj/GeoOrderTest/models"
@@ -11,10 +10,13 @@ import (
 
 //For short, there is only one sync.Map to store orders,
 // if in very huge orders condition, lock and unlock would be a bottleneck, may separate orders to different areas
-var orders sync.Map
+var orders []models.Order
 
 //NewOrder create new order
 func NewOrder(msg models.PlaceRequest) (resp *models.PlaceResponse, statusCode int, err error) {
+	lock.Lock()
+	defer lock.Unlock()
+
 	if len(msg.Origin) != 2 || len(msg.Destination) != 2 {
 		return nil, http.StatusBadRequest, errors.New(models.ErrorDescription)
 	}
@@ -37,7 +39,7 @@ func NewOrder(msg models.PlaceRequest) (resp *models.PlaceResponse, statusCode i
 		EndLongitude:   endLongitude,
 		CreateTime:     time.Now(),
 	}
-	orders.Store(order.ID, order)
+	orders = append(orders, order)
 	resp = &models.PlaceResponse{
 		ID:       order.ID,
 		Distance: order.Distance,
@@ -50,12 +52,11 @@ func NewOrder(msg models.PlaceRequest) (resp *models.PlaceResponse, statusCode i
 func GetOrderList(page, limit int) (list []models.PlaceResponse) {
 	start := (page-1)*limit + 1
 	end := page * limit
-	for i := start; i < end; i++ {
-		tmpOrder, ok := orders.Load(int64(i))
-		if tmpOrder == nil || ok == false {
+	for i := start; i < end && i < len(orders); i++ {
+		order := orders[i]
+		if order == (models.Order{}) {
 			break
 		}
-		order := tmpOrder.(models.Order)
 		orderResponse := models.PlaceResponse{
 			ID:       order.ID,
 			Distance: order.Distance,
@@ -70,18 +71,22 @@ func GetOrderList(page, limit int) (list []models.PlaceResponse) {
 func TakeOrder(orderID int64) (int, error) {
 	lock.Lock()
 	defer lock.Unlock()
-	tmpOrder, ok := orders.Load(orderID)
-	if tmpOrder == nil || ok == false {
+
+	var order models.Order
+	for _, v := range orders {
+		if v.ID == orderID {
+			order = v
+		}
+	}
+	if order == (models.Order{}) {
 		return http.StatusNotFound, errors.New(models.ErrorOrderNotFound)
 	}
-	order := tmpOrder.(models.Order)
 	if order.Status == models.OrderStatusTaken {
 		return http.StatusConflict, errors.New(models.ErrorOrderAlreadyBeenTaken)
 	}
-	order.Status = models.OrderStatusTaken
 	if isTest == true {
 		time.Sleep(time.Second)
 	}
-	orders.Store(orderID, order)
+	order.Status = models.OrderStatusTaken
 	return http.StatusOK, nil
 }

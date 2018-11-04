@@ -13,6 +13,7 @@ import (
 	"github.com/Sirupsen/logrus"
 
 	"github.com/jchprj/GeoOrderTest/cfg"
+	"github.com/jchprj/GeoOrderTest/models"
 )
 
 var autoID int64
@@ -59,19 +60,40 @@ func calculateDistance(start, end []string) (result int, err error) {
 	if err != nil {
 		return 0, err
 	}
-	rows := obj["rows"].([]interface{})
-	row := rows[0].(map[string]interface{})
-	elements := row["elements"].([]interface{})
-	element := elements[0].(map[string]interface{})
-	status := element["status"].(string)
+	rows, ok := obj["rows"].([]interface{})
+	if ok == false {
+		return 0, errors.New(models.ErrorCalculateFailed)
+	}
+	row, ok := rows[0].(map[string]interface{})
+	if ok == false {
+		return 0, errors.New(models.ErrorCalculateFailed)
+	}
+	elements, ok := row["elements"].([]interface{})
+	if ok == false {
+		return 0, errors.New(models.ErrorCalculateFailed)
+	}
+	element, ok := elements[0].(map[string]interface{})
+	if ok == false {
+		return 0, errors.New(models.ErrorCalculateFailed)
+	}
+	status, ok := element["status"].(string)
+	if ok == false {
+		return 0, errors.New(models.ErrorCalculateFailed)
+	}
 	if status == "ZERO_RESULTS" {
 		return 0, nil
 	}
 	if status != "OK" {
 		return 0, errors.New(status)
 	}
-	distance := element["distance"].(map[string]interface{})
-	value := distance["value"].(float64)
+	distance, ok := element["distance"].(map[string]interface{})
+	if ok == false {
+		return 0, errors.New(models.ErrorCalculateFailed)
+	}
+	value, ok := distance["value"].(float64)
+	if ok == false {
+		return 0, errors.New(models.ErrorCalculateFailed)
+	}
 
 	return (int)(value), nil
 }
