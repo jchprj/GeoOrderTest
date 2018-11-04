@@ -10,6 +10,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/jchprj/GeoOrderTest/api/handlers"
 	"github.com/jchprj/GeoOrderTest/cfg"
+	"github.com/jchprj/GeoOrderTest/models"
 )
 
 //Init init API http server
@@ -18,9 +19,9 @@ func Init() {
 
 	r := mux.NewRouter()
 
-	r.HandleFunc("/orders", handlers.PlaceHandler).Methods("POST")
-	r.HandleFunc("/orders/{id}", handlers.TakeHandler).Methods("PATCH")
-	r.HandleFunc("/orders?", handlers.ListHandler).Methods("GET").Queries("page", "{page}").Queries("limit", "{limit}")
+	r.HandleFunc(models.APIPathOrder, handlers.PlaceHandler).Methods("POST")
+	r.HandleFunc(models.APIPathOrder+"/{orderID}", handlers.TakeHandler).Methods("PATCH")
+	r.HandleFunc(models.APIPathOrder, handlers.ListHandler).Methods("GET")
 
 	srv := &http.Server{
 		Addr:         cfg.HTTPServer.Addr,

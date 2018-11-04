@@ -1,6 +1,8 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 //Order order model
 type Order struct {
@@ -20,7 +22,7 @@ type Order struct {
 //
 // swagger:response genericError
 type GenericError struct {
-	Error error `json:"error"`
+	Error string `json:"error"`
 }
 
 // PlaceRequest A Pet is the main product in the store.

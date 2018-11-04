@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -22,33 +23,49 @@ import (
 func PlaceHandler(w http.ResponseWriter, r *http.Request) {
 	// logrus.Info("placeHandler")
 	if r.Body == nil {
-		http.Error(w, "no body", http.StatusBadRequest)
+		invalidParameters(w)
 		return
 	}
 	b, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		invalidParameters(w)
 		return
 	}
 	var msg models.PlaceRequest
 	err = json.Unmarshal(b, &msg)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		invalidParameters(w)
 		return
 	}
 
-	httpStatus, err := mgr.NewOrder(msg)
+	resp, httpStatus, err := mgr.NewOrder(msg)
 	if err != nil {
-		http.Error(w, err.Error(), httpStatus)
+		sendError(w, err, httpStatus)
 		return
 	}
 
-	output, err := json.Marshal(msg)
+	output, err := json.Marshal(resp)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		sendError(w, err, http.StatusInternalServerError)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, (string)(output))
+}
+
+func invalidParameters(w http.ResponseWriter) {
+	sendError(w, errors.New(models.ErrorInvalidParameters), http.StatusBadRequest)
+}
+
+func sendError(w http.ResponseWriter, err error, statusCode int) {
+	errResp := models.GenericError{
+		Error: err.Error(),
+	}
+	output, err := json.Marshal(errResp)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	http.Error(w, (string)(output), statusCode)
 }
