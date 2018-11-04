@@ -18,7 +18,7 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "config.yml", "config file")
 	rootCmd.PersistentFlags().StringVar(&logDir, "logDir", "logs", "log file directory")
-	rootCmd.PersistentFlags().StringVar(&logLevel, "logLevel", "error", "log level")
+	rootCmd.PersistentFlags().StringVar(&logLevel, "logLevel", "info", "log level")
 	rootCmd.PersistentFlags().StringVar(&logPrefix, "logPrefix", "", "log file prefix")
 	rootCmd.PersistentFlags().BoolVar(&logStd, "logStd", false, "log to console as well")
 }
@@ -39,10 +39,13 @@ func Execute() {
 }
 
 var rootCmd = &cobra.Command{
-	Use:   "GeoOrderTest config.yml",
+	Use:   "GeoOrderTest --config config.yml",
 	Short: "Based on Google Maps API",
 	Long: `Use MySQL store data, also cache data in memory.
-	Support 3 API, list/place/take.`,
+Handle path: /orders, support 3 methods:
+  GET: list orders
+  POST: place new order
+  PATCH: take an unassigned order`,
 	Args: cobra.MinimumNArgs(0),
 
 	Run: func(cmd *cobra.Command, args []string) {

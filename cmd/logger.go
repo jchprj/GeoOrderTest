@@ -59,7 +59,6 @@ func (w *logWriter) Write(buf []byte) (int, error) {
 func initLog() {
 	writer := new(logWriter)
 	if logDir != "" {
-		// Umask 是权限的补码,用于设置创建文件和文件夹默认权限
 		mask := syscall.Umask(0)
 		defer syscall.Umask(mask)
 

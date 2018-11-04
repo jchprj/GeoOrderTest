@@ -1,6 +1,7 @@
 package cfg
 
 import (
+	"fmt"
 	"os"
 	"time"
 
@@ -48,6 +49,7 @@ func InitConfig(file string) {
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err != nil {
 		logrus.Error("No config file found, exit")
+		fmt.Println("No config file found, exit")
 		os.Exit(1)
 	}
 	logrus.Info("ReadInConfig")
