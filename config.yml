@@ -1,0 +1,6 @@
+HTTPServer:
+  Addr: 0.0.0.0:8080
+  ShutdownTimeout: 15
+  WriteTimeout: 15
+  ReadTimeout: 15
+  IdleTimeout: 60

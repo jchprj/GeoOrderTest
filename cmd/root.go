@@ -3,8 +3,11 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/jchprj/GeoOrderTest/api"
+	"github.com/jchprj/GeoOrderTest/cfg"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -26,18 +29,23 @@ func finishInit() {
 	logrus.Info("init complete")
 }
 
-func initConfig() string {
+func initConfig() {
 	viper.SetConfigFile(cfgFile)
 	viper.AutomaticEnv() // read in environment variables that match
 
 	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		logrus.Info("ReadInConfig")
-		return viper.ConfigFileUsed()
+	if err := viper.ReadInConfig(); err != nil {
+		logrus.Error("No config file found, exit")
+		os.Exit(1)
 	}
-	logrus.Error("No config file found, exit")
-	os.Exit(1)
-	return ""
+	logrus.Info("ReadInConfig")
+	cfg.HTTPServer = cfg.HTTPServerConfig{
+		Addr:            viper.GetString("HTTPServer.Addr"),
+		ShutdownTimeout: time.Second * viper.GetDuration("HTTPServer.ShutdownTimeout"),
+		ReadTimeout:     time.Second * viper.GetDuration("HTTPServer.ReadTimeout"),
+		WriteTimeout:    time.Second * viper.GetDuration("HTTPServer.WriteTimeout"),
+		IdleTimeout:     time.Second * viper.GetDuration("HTTPServer.IdleTimeout"),
+	}
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -56,8 +64,7 @@ var rootCmd = &cobra.Command{
 	Support 3 API, list/place/take.`,
 	Args: cobra.MinimumNArgs(0),
 
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
+		api.Init()
 	},
 }
