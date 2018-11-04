@@ -3,7 +3,13 @@
 This is an order test based on geographic coordinates. First place an order, then get order list, any unassigned order can be taken.
 
 
-API doc link: [API DOC](docs/swagger.md)
+# API doc 
+
+Markdown version documentation link: [API DOC](docs/swagger.md)
+
+API documentation is generated from source code by swagger.  
+To generate, run `gen.sh` under `/docs`. Should install [go-swagger](https://goswagger.io/) and [swagger-markdown](https://www.npmjs.com/package/swagger-markdown) first.  
+Run `httpserver.sh` under `/docs` will serve a web page at port 8081 for API doc.
 
 ## Start
 
