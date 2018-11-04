@@ -1,7 +1,10 @@
 {
     "cSpell.words": [
+        "errorln",
         "infoln",
         "jchprj",
-        "logrus"
+        "logrus",
+        "passwd",
+        "xorm"
     ]
 }

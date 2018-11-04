@@ -12,4 +12,6 @@ const (
 	ErrorDescription           = "ERROR_DESCRIPTION"
 	ErrorInvalidParameters     = "INVALID_PARAMETERS"
 	ErrorCalculateFailed       = "CALCULATE_FAILED"
+
+	SQLTimeFormat = "2006-01-02 15:04:05"
 )

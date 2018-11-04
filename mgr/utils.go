@@ -28,10 +28,6 @@ func Test() {
 //The expression was searched from Google
 var re = regexp.MustCompile(`^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$`)
 
-//GetCurrentAutoID for test only
-func GetCurrentAutoID() int64 {
-	return autoID
-}
 func generateOrderID() int64 {
 	atomic.AddInt64(&autoID, 1)
 	return autoID

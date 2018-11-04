@@ -7,21 +7,15 @@ import (
 	"os/signal"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/gorilla/mux"
 	"github.com/jchprj/GeoOrderTest/api/handlers"
 	"github.com/jchprj/GeoOrderTest/cfg"
-	"github.com/jchprj/GeoOrderTest/models"
 )
 
 //Init init API http server
 func Init() {
 	var wait = cfg.HTTPServer.ShutdownTimeout
 
-	r := mux.NewRouter()
-
-	r.HandleFunc(models.APIPathOrder, handlers.PlaceHandler).Methods("POST")
-	r.HandleFunc(models.APIPathOrder+"/{orderID}", handlers.TakeHandler).Methods("PATCH")
-	r.HandleFunc(models.APIPathOrder, handlers.ListHandler).Methods("GET")
+	r := handlers.GetRouter()
 
 	srv := &http.Server{
 		Addr:         cfg.HTTPServer.Addr,

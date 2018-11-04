@@ -7,6 +7,7 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/jchprj/GeoOrderTest/api"
 	"github.com/jchprj/GeoOrderTest/cfg"
+	"github.com/jchprj/GeoOrderTest/mgr"
 	"github.com/spf13/cobra"
 )
 
@@ -24,6 +25,7 @@ func init() {
 func finishInit() {
 	initLog()
 	cfg.InitConfig(cfgFile)
+	mgr.InitMgr()
 	logrus.Info("init complete")
 }
 

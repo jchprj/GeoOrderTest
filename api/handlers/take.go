@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 
@@ -24,6 +26,23 @@ func TakeHandler(w http.ResponseWriter, r *http.Request) {
 	orderIDStr := vars["orderID"]
 	orderID, err := strconv.ParseInt(orderIDStr, 10, 64)
 	if err != nil {
+		invalidParameters(w)
+		return
+	}
+	b, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	if err != nil {
+		invalidParameters(w)
+		return
+	}
+	var msg map[string]string
+	err = json.Unmarshal(b, &msg)
+	if err != nil {
+		invalidParameters(w)
+		return
+	}
+	status := msg["status"]
+	if status != "TAKEN" {
 		invalidParameters(w)
 		return
 	}

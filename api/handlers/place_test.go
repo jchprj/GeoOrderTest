@@ -1,18 +1,13 @@
 package handlers_test
 
 import (
-	"encoding/json"
 	"net/http"
-	"net/http/httptest"
 	"strconv"
-	"strings"
 	"testing"
 
-	"github.com/gorilla/mux"
 	"github.com/jchprj/GeoOrderTest/api/handlers"
 	"github.com/jchprj/GeoOrderTest/cfg"
 	"github.com/jchprj/GeoOrderTest/mgr"
-	"github.com/jchprj/GeoOrderTest/models"
 )
 
 type request struct {
@@ -23,13 +18,15 @@ type request struct {
 
 func BenchmarkPlaceHandler(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		postStrings([]string{"12", ""}, []string{"667", ""})
+		handlers.PostStrings([]string{"12", ""}, []string{"667", ""})
 	}
 }
 
 func TestPlaceHandler(t *testing.T) {
 	cfg.InitConfig("../../config.yml")
+	mgr.InitMgr()
 	autoID := mgr.GetCurrentAutoID()
+	t.Logf("start autoID: %v", autoID)
 	//multiple JSON request test
 	tt := []request{
 		{
@@ -61,49 +58,17 @@ func TestPlaceHandler(t *testing.T) {
 		},
 	}
 	for _, tc := range tt {
-		rr, err := postStrings(tc.start, tc.end)
+		rr, err := handlers.PostStrings(tc.start, tc.end)
 		if err != nil {
 			t.Fatal(err)
 		}
-		checkResponse(rr, tc.expectedCode, tc.expectedError, t)
+		handlers.CheckResponse(rr, tc.expectedCode, tc.expectedError, t)
 	}
 
 	//single string test
-	rr, err := postString([]byte("abc"))
+	rr, err := handlers.PostString([]byte("abc"))
 	if err != nil {
 		t.Fatal(err)
 	}
-	checkResponse(rr, http.StatusBadRequest, `{"error":"INVALID_PARAMETERS"}`, t)
-}
-
-func postStrings(start, end []string) (rr *httptest.ResponseRecorder, err error) {
-	msg := models.PlaceRequest{
-		Origin:      start,
-		Destination: end,
-	}
-	output, _ := json.Marshal(msg)
-	return postString(output)
-}
-
-func postString(output []byte) (rr *httptest.ResponseRecorder, err error) {
-	req, err := http.NewRequest("POST", "/orders", strings.NewReader(string(output)))
-	if err != nil {
-		return &httptest.ResponseRecorder{}, err
-	}
-	rr = httptest.NewRecorder()
-	router := mux.NewRouter()
-	router.HandleFunc(models.APIPathOrder, handlers.PlaceHandler).Methods("POST")
-	router.ServeHTTP(rr, req)
-	return rr, nil
-}
-
-func checkResponse(rr *httptest.ResponseRecorder, expectedCode int, expected string, t *testing.T) {
-	if status := rr.Code; status != expectedCode {
-		t.Errorf("handler returned wrong status code: got %v want %v", status, expectedCode)
-	}
-
-	output := strings.Trim(rr.Body.String(), "\n")
-	if output != expected {
-		t.Errorf("handler returned unexpected body: got %v want %v", output, expected)
-	}
+	handlers.CheckResponse(rr, http.StatusBadRequest, `{"error":"INVALID_PARAMETERS"}`, t)
 }

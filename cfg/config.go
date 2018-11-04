@@ -20,6 +20,17 @@ type HTTPServerConfig struct {
 //HTTPServer httpServer config
 var HTTPServer HTTPServerConfig
 
+//DatabaseConfig database config
+type DatabaseConfig struct {
+	User   string
+	Passwd string
+	Addr   string
+	DBName string
+}
+
+//Database database config
+var Database DatabaseConfig
+
 //ThirdPartyConfig current only Google Maps API
 type ThirdPartyConfig struct {
 	GoogleMapsAPIKey string
@@ -46,6 +57,12 @@ func InitConfig(file string) {
 		ReadTimeout:     time.Second * viper.GetDuration("HTTPServer.ReadTimeout"),
 		WriteTimeout:    time.Second * viper.GetDuration("HTTPServer.WriteTimeout"),
 		IdleTimeout:     time.Second * viper.GetDuration("HTTPServer.IdleTimeout"),
+	}
+	Database = DatabaseConfig{
+		User:   viper.GetString("Database.User"),
+		Passwd: viper.GetString("Database.Passwd"),
+		Addr:   viper.GetString("Database.Addr"),
+		DBName: viper.GetString("Database.DBName"),
 	}
 	ThirdParty = ThirdPartyConfig{
 		GoogleMapsAPIKey: viper.GetString("ThirdParty.GoogleMapsAPIKey"),

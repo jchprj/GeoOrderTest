@@ -4,5 +4,6 @@ logs
 *.log
 *.exe
 debug
+debug.test
 run.cmd
 temp

@@ -6,15 +6,15 @@ import (
 
 //Order order model
 type Order struct {
-	ID             int64  `json:"id"`
-	Distance       int    `json:"distance"`
-	Status         string `json:"status"`
-	StartLatitude  string
-	StartLongitude string
-	EndLatitude    string
-	EndLongitude   string
-	CreateTime     time.Time
-	TakenTime      time.Time
+	OrderID        int64     `xorm:"'order_i_d' pk autoincr bigint(20)"`
+	Distance       int       `xorm:"int(11)"`
+	Status         string    `xorm:"varchar(200)"`
+	StartLatitude  string    `xorm:"varchar(200)"`
+	StartLongitude string    `xorm:"varchar(200)"`
+	EndLatitude    string    `xorm:"varchar(200)"`
+	EndLongitude   string    `xorm:"varchar(200)"`
+	CreateTime     time.Time `xorm:"createTime"`
+	TakenTime      time.Time `xorm:"takenTime"`
 }
 
 // GenericError is the default error message that is generated.

@@ -1,6 +1,7 @@
 package handlers_test
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -19,23 +20,36 @@ import (
 func TestTakeHandler(t *testing.T) {
 	cfg.InitConfig("../../config.yml")
 	mgr.Test()
-	ID := 3
+	mgr.InitMgr()
 	fmt.Println("start: ")
-	postNum := 21
-	takeNum := 10000
+	postNum := 1
+	takeNum := 10
+	var resp string
 	for i := 0; i < postNum; i++ {
-		postStrings([]string{"+90.0", "-127.554334"}, []string{"+90.0", "-127.554334"})
+		rr, _ := handlers.PostStrings([]string{"+90.0", "-127.554334"}, []string{"+90.0", "-127.554334"})
+		resp = rr.Body.String()
 	}
+	var obj map[string]interface{}
+	err := json.Unmarshal([]byte(resp), &obj)
+	if err != nil {
+		t.Fatal(err)
+	}
+	IDFloat64, isOK := obj["id"].(float64)
+	if isOK == false {
+		t.Errorf("not float64")
+	}
+	ID := strconv.FormatFloat(IDFloat64, 'f', 0, 64)
+	fmt.Println("ID!", ID)
 	router := mux.NewRouter()
 	router.HandleFunc(models.APIPathOrder+"/{orderID}", handlers.TakeHandler).Methods("PATCH")
 	c := make(chan int, takeNum)
 	for i := 0; i < takeNum; i++ {
 		go func() {
-			rr, err := takeList(router, strconv.Itoa(ID))
+			rr, err := takeOrder(ID)
 			if err != nil {
 				t.Fatal(err)
 			}
-			t.Log(rr.Code)
+			t.Log(rr.Code, rr.Body.String())
 			c <- rr.Code
 			// checkResponse(rr, http.StatusConflict, `{"error":"ORDER_ALREADY_BEEN_TAKEN"}`, t)
 		}()
@@ -56,14 +70,15 @@ func TestTakeHandler(t *testing.T) {
 	if ok != 1 {
 		t.Errorf("ok is not 1")
 	}
-	rr, err := takeList(router, strconv.Itoa(ID))
+	rr, err := takeOrder(ID)
 	if err != nil {
 		t.Fatal(err)
 	}
-	checkResponse(rr, http.StatusConflict, `{"error":"ORDER_ALREADY_BEEN_TAKEN"}`, t)
+	handlers.CheckResponse(rr, http.StatusConflict, `{"error":"ORDER_ALREADY_BEEN_TAKEN"}`, t)
 }
 
-func takeList(router *mux.Router, ID string) (rr *httptest.ResponseRecorder, err error) {
+func takeOrder(ID string) (rr *httptest.ResponseRecorder, err error) {
+	router := handlers.GetRouter()
 	req, err := http.NewRequest("PATCH", "/orders/"+ID, strings.NewReader(`{"status": "TAKEN"}`))
 	if err != nil {
 		return &httptest.ResponseRecorder{}, err
