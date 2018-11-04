@@ -8,10 +8,12 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/jchprj/GeoOrderTest/api/handlers"
+	"github.com/jchprj/GeoOrderTest/cfg"
 	"github.com/jchprj/GeoOrderTest/models"
 )
 
 func TestListHandler(t *testing.T) {
+	cfg.InitConfig("../../config.yml")
 	page := 3
 	limit := 10
 	n := 21
@@ -22,7 +24,7 @@ func TestListHandler(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	checkResponse(rr, http.StatusOK, `[{"id":21,"distance":1,"status":"UNASSIGNED"}]`, t)
+	checkResponse(rr, http.StatusOK, `[{"id":21,"distance":0,"status":"UNASSIGNED"}]`, t)
 }
 
 func getList(page, limit string) (rr *httptest.ResponseRecorder, err error) {

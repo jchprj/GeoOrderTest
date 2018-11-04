@@ -3,9 +3,7 @@ package mgr
 import (
 	"errors"
 	"net/http"
-	"regexp"
 	"sync"
-	"sync/atomic"
 	"time"
 
 	"github.com/jchprj/GeoOrderTest/models"
@@ -14,30 +12,6 @@ import (
 //For short, there is only one sync.Map to store orders,
 // if in very huge orders condition, lock and unlock would be a bottleneck, may separate orders to different areas
 var orders sync.Map
-var autoID int64
-var lock sync.RWMutex
-var isTest bool
-
-//Test use test mode
-func Test() {
-	isTest = true
-}
-
-//The expression was searched from Google
-var re = regexp.MustCompile(`^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$`)
-
-func generateOrderID() int64 {
-	atomic.AddInt64(&autoID, 1)
-	return autoID
-}
-
-func validateLatLong(latitude, longitude string) bool {
-	return re.MatchString(latitude + "," + longitude)
-}
-
-func calculateDistance(start, end []string) int {
-	return 1
-}
 
 //NewOrder create new order
 func NewOrder(msg models.PlaceRequest) (resp *models.PlaceResponse, statusCode int, err error) {
@@ -49,9 +23,13 @@ func NewOrder(msg models.PlaceRequest) (resp *models.PlaceResponse, statusCode i
 	if validateLatLong(startLatitude, startLongitude) == false || validateLatLong(endLatitude, endLongitude) == false {
 		return nil, http.StatusBadRequest, errors.New(models.ErrorDescription)
 	}
+	distance, err := calculateDistance(msg.Origin, msg.Destination)
+	if err != nil {
+		return nil, http.StatusInternalServerError, err
+	}
 	order := models.Order{
 		ID:             generateOrderID(),
-		Distance:       calculateDistance(msg.Origin, msg.Destination),
+		Distance:       distance,
 		Status:         models.OrderStatusUnassigned,
 		StartLatitude:  startLatitude,
 		StartLongitude: startLongitude,

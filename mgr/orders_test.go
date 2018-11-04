@@ -2,6 +2,8 @@ package mgr
 
 import (
 	"testing"
+
+	"github.com/jchprj/GeoOrderTest/cfg"
 )
 
 func BenchmarkGenerateOrderID(b *testing.B) {
@@ -44,15 +46,19 @@ func TestValidateLatLong(t *testing.T) {
 }
 
 func TestCalculateDistance(t *testing.T) {
+	cfg.InitConfig("../config.yml")
 	tt := struct {
 		start, end []string
 		expected   int
 	}{
-		[]string{"", ""},
-		[]string{"", ""},
-		1,
+		[]string{"40.6905615", "-73.9976592"},
+		[]string{"40.6655101", "-73.89188969999998"},
+		34188,
 	}
-	result := calculateDistance(tt.start, tt.end)
+	result, err := calculateDistance(tt.start, tt.end)
+	if err != nil {
+		t.Errorf("calculateDistance error: %v", err)
+	}
 	expected := tt.expected
 	if result != expected {
 		t.Errorf("unexpected result: got %v want %v", result, expected)

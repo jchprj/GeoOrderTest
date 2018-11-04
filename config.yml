@@ -4,3 +4,6 @@ HTTPServer:
   WriteTimeout: 15
   ReadTimeout: 15
   IdleTimeout: 60
+ThirdParty:
+  GoogleMapsAPIKey: 
+  GoogleMapsAPIUrl: https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=%s,%s&destinations=%s,%s&key=%s

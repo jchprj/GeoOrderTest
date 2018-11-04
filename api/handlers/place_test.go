@@ -4,11 +4,14 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"strings"
 	"testing"
 
 	"github.com/gorilla/mux"
 	"github.com/jchprj/GeoOrderTest/api/handlers"
+	"github.com/jchprj/GeoOrderTest/cfg"
+	"github.com/jchprj/GeoOrderTest/mgr"
 	"github.com/jchprj/GeoOrderTest/models"
 )
 
@@ -25,34 +28,36 @@ func BenchmarkPlaceHandler(b *testing.B) {
 }
 
 func TestPlaceHandler(t *testing.T) {
+	cfg.InitConfig("../../config.yml")
+	autoID := mgr.GetCurrentAutoID()
 	//multiple JSON request test
 	tt := []request{
 		{
 			[]string{"+90.0", "-127.554334"}, []string{"+90.0", "-127.554334"},
-			http.StatusOK, `{"id":1,"distance":1,"status":"UNASSIGNED"}`,
+			http.StatusOK, `{"id":` + strconv.FormatInt(autoID+1, 10) + `,"distance":0,"status":"UNASSIGNED"}`,
 		},
 		{
 			[]string{"45", "180"}, []string{"+90.0", "-127.554334"},
-			http.StatusOK, `{"id":2,"distance":1,"status":"UNASSIGNED"}`,
+			http.StatusOK, `{"id":` + strconv.FormatInt(autoID+2, 10) + `,"distance":0,"status":"UNASSIGNED"}`,
 		},
 		{
 			[]string{"+90.0", "-127.554334"}, []string{"+90.0", "-127.554334"},
-			http.StatusOK, `{"id":3,"distance":1,"status":"UNASSIGNED"}`,
+			http.StatusOK, `{"id":` + strconv.FormatInt(autoID+3, 10) + `,"distance":0,"status":"UNASSIGNED"}`,
 		},
 		{
 			[]string{"+90.0", "-127.554334"}, []string{"+90.0", "-127.554334"},
-			http.StatusOK, `{"id":4,"distance":1,"status":"UNASSIGNED"}`},
+			http.StatusOK, `{"id":` + strconv.FormatInt(autoID+4, 10) + `,"distance":0,"status":"UNASSIGNED"}`},
 		{
 			[]string{"heap", "-127.554334"}, []string{"+90.0", "-127.554334"},
-			http.StatusBadRequest, `{"error":"latitude or longitude illegal"}`,
+			http.StatusBadRequest, `{"error":"ERROR_DESCRIPTION"}`,
 		},
 		{
 			[]string{"+90.0", "-127.554334"}, []string{"", ""},
-			http.StatusBadRequest, `{"error":"latitude or longitude illegal"}`,
+			http.StatusBadRequest, `{"error":"ERROR_DESCRIPTION"}`,
 		},
 		{
 			[]string{"+90.0"}, []string{""},
-			http.StatusBadRequest, `{"error":"string length illegal"}`,
+			http.StatusBadRequest, `{"error":"ERROR_DESCRIPTION"}`,
 		},
 	}
 	for _, tc := range tt {
@@ -68,7 +73,7 @@ func TestPlaceHandler(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	checkResponse(rr, http.StatusBadRequest, `{"error":"invalid character 'a' looking for beginning of value"}`, t)
+	checkResponse(rr, http.StatusBadRequest, `{"error":"INVALID_PARAMETERS"}`, t)
 }
 
 func postStrings(start, end []string) (rr *httptest.ResponseRecorder, err error) {

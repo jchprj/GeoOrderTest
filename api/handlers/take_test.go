@@ -10,12 +10,14 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/jchprj/GeoOrderTest/api/handlers"
+	"github.com/jchprj/GeoOrderTest/cfg"
 	"github.com/jchprj/GeoOrderTest/mgr"
 	"github.com/jchprj/GeoOrderTest/models"
 )
 
 //Parallel take same order for many times, count successful times through channel
 func TestTakeHandler(t *testing.T) {
+	cfg.InitConfig("../../config.yml")
 	mgr.Test()
 	ID := 3
 	fmt.Println("start: ")

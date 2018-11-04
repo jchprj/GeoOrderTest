@@ -11,4 +11,5 @@ const (
 	ErrorOrderAlreadyBeenTaken = "ORDER_ALREADY_BEEN_TAKEN"
 	ErrorDescription           = "ERROR_DESCRIPTION"
 	ErrorInvalidParameters     = "INVALID_PARAMETERS"
+	ErrorCalculateFailed       = "CALCULATE_FAILED"
 )

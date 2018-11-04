@@ -1,6 +1,12 @@
 package cfg
 
-import "time"
+import (
+	"os"
+	"time"
+
+	"github.com/Sirupsen/logrus"
+	"github.com/spf13/viper"
+)
 
 //HTTPServerConfig httpServer config
 type HTTPServerConfig struct {
@@ -13,3 +19,36 @@ type HTTPServerConfig struct {
 
 //HTTPServer httpServer config
 var HTTPServer HTTPServerConfig
+
+//ThirdPartyConfig current only Google Maps API
+type ThirdPartyConfig struct {
+	GoogleMapsAPIKey string
+	GoogleMapsAPIUrl string
+}
+
+//ThirdParty ThirdParty config
+var ThirdParty ThirdPartyConfig
+
+//InitConfig InitConfig
+func InitConfig(file string) {
+	viper.SetConfigFile(file)
+	viper.AutomaticEnv() // read in environment variables that match
+
+	// If a config file is found, read it in.
+	if err := viper.ReadInConfig(); err != nil {
+		logrus.Error("No config file found, exit")
+		os.Exit(1)
+	}
+	logrus.Info("ReadInConfig")
+	HTTPServer = HTTPServerConfig{
+		Addr:            viper.GetString("HTTPServer.Addr"),
+		ShutdownTimeout: time.Second * viper.GetDuration("HTTPServer.ShutdownTimeout"),
+		ReadTimeout:     time.Second * viper.GetDuration("HTTPServer.ReadTimeout"),
+		WriteTimeout:    time.Second * viper.GetDuration("HTTPServer.WriteTimeout"),
+		IdleTimeout:     time.Second * viper.GetDuration("HTTPServer.IdleTimeout"),
+	}
+	ThirdParty = ThirdPartyConfig{
+		GoogleMapsAPIKey: viper.GetString("ThirdParty.GoogleMapsAPIKey"),
+		GoogleMapsAPIUrl: viper.GetString("ThirdParty.GoogleMapsAPIUrl"),
+	}
+}

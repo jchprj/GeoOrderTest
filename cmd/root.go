@@ -3,13 +3,11 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"time"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/jchprj/GeoOrderTest/api"
 	"github.com/jchprj/GeoOrderTest/cfg"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var cfgFile string
@@ -25,27 +23,8 @@ func init() {
 }
 func finishInit() {
 	initLog()
-	initConfig()
+	cfg.InitConfig(cfgFile)
 	logrus.Info("init complete")
-}
-
-func initConfig() {
-	viper.SetConfigFile(cfgFile)
-	viper.AutomaticEnv() // read in environment variables that match
-
-	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err != nil {
-		logrus.Error("No config file found, exit")
-		os.Exit(1)
-	}
-	logrus.Info("ReadInConfig")
-	cfg.HTTPServer = cfg.HTTPServerConfig{
-		Addr:            viper.GetString("HTTPServer.Addr"),
-		ShutdownTimeout: time.Second * viper.GetDuration("HTTPServer.ShutdownTimeout"),
-		ReadTimeout:     time.Second * viper.GetDuration("HTTPServer.ReadTimeout"),
-		WriteTimeout:    time.Second * viper.GetDuration("HTTPServer.WriteTimeout"),
-		IdleTimeout:     time.Second * viper.GetDuration("HTTPServer.IdleTimeout"),
-	}
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
