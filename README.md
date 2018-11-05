@@ -11,10 +11,7 @@ Tested under Ubuntu 18.04 LTS, start.sh will install Docker, and build a Docker 
 
 When building the Docker image, MySQL will be installed, database and table will be created.   
 
-When running, MySQL data directory will be mounted to persist data, a port will be mounted to the system.   
-Then go get the code, run go test, generate API doc, compile the code, and start the server.   
-
-Besides, the API documentation will also be served at port 8081 by swagger.
+When running, port 8080 and 8081 will be mounted to the local system. The progresses are: go get the code, run go test, generate API doc, start the API server(8080) and API doc server(8081). 
 
 ### Config
 

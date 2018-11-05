@@ -6,7 +6,7 @@ HTTPServer:
   IdleTimeout: 60
 Database:
   User: root
-  Passwd: 
+  Passwd: 123456
   Addr: localhost:3306
   DBName: geoordertest
 ThirdParty:

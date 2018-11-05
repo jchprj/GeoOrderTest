@@ -12,9 +12,7 @@ sh gen.sh
 cd ../
 echo start test
 go test ./...
-echo install
-go install github.com/jchprj/GeoOrderTest
-cd /root
+
 echo start server
 $GOPATH/bin/GeoOrderTest --config /root/config.yml &
 swagger serve --no-open -p 8081 $GOPATH/src/github.com/jchprj/GeoOrderTest/docs/swagger.json &
