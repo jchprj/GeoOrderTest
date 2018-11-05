@@ -3,15 +3,36 @@
 This is an order test based on geographic coordinates. First place an order, then get order list, any unassigned order can be taken.
 
 
-# API doc 
+## Deploy
+
+`start.sh`
+
+Tested under Ubuntu 18.04 LTS, start.sh will install Docker, and build a Docker image, and run the image.  
+
+When building the Docker image, MySQL will be installed, database and table will be created.   
+
+When running, MySQL data directory will be mounted to persist data, a port will be mounted to the system.   
+Then go get the code, run go test, generate API doc, compile the code, and start the server.   
+
+Besides, the API documentation will also be served at port 8081 by swagger.
+
+### Config
+
+*MUST* Put Google Maps API key in config.yml under ThirdParty block:
+
+`  GoogleMapsAPIKey: YourKey`
+
+Other parts are http server and database connection configures, no modification needed if use the start.sh.
+
+# API doc
 
 Markdown version documentation link: [API DOC](docs/swagger.md)
 
 API documentation is generated from source code by swagger.  
 To generate, run `gen.sh` under `/docs`. Should install [go-swagger](https://goswagger.io/) and [swagger-markdown](https://www.npmjs.com/package/swagger-markdown) first.  
-Run `httpserver.sh` under `/docs` will serve a web page at port 8081 for API doc.
+As a demonstration, `httpserver.sh` under `/docs` will serve a web page at port 8081 for API doc.
 
-## Start
+## Command help
 
 ```
 GeoOrderTest.exe -h
@@ -37,36 +58,33 @@ Flags:
 
 Written in Golang 1.10.3, just go build.
 
-## Deploy
-
-Ubuntu 18.04 LTS, docker, start.sh, stop.sh, destroy.sh
-
-### Config
-
-Put Google Maps API key in config.yml under ThirdParty block:
-
-`  GoogleMapsAPIKey: YourKey`
-
-Other is to config http server and database connection.
-
-### Docker
-
-Docker build
-
-Docker run
+`go get -u github.com/jchprj/GeoOrderTest`  
+`go install github.com/jchprj/GeoOrderTest`  
+`./bin/GeoOrderTest --config config.yml`
 
 ## Used Go libraries
 
-- Cobra: A commander
-- logrus: log system
-- gorilla: mux router
-- xorm: MySQL engine
-- go-swagger: API doc
+- [Cobra](https://github.com/spf13/cobra): a commander
+- [Logrus](https://github.com/sirupsen/logrus): log system
+- [gorilla/mux](https://github.com/gorilla/mux): mux router
+- [xorm](https://github.com/go-xorm/xorm): MySQL engine
+- [Swagger](https://github.com/go-swagger/go-swagger): API documentation
 
 ## Test
 
-benchmark, concurrent
 
-### Run Go test
+### Go test
 
-### Client test
+`go test ./...`
+
+Include some benchmark and concurrent tests.
+
+Unit test files are:  
+
+* api/handlers/list_test.go
+* api/handlers/place_test.go
+* api/handlers/take_test.go
+* mgr/db_test.go
+* mgr/mysql_test.go
+* mgr/utils_test.go
+
