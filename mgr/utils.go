@@ -60,12 +60,18 @@ func calculateDistance(start, end []string) (result int, err error) {
 	if ok == false {
 		return 0, errors.New(models.ErrorCalculateFailed)
 	}
+	if len(rows) == 0 {
+		return 0, errors.New(models.ErrorCalculateFailed)
+	}
 	row, ok := rows[0].(map[string]interface{})
 	if ok == false {
 		return 0, errors.New(models.ErrorCalculateFailed)
 	}
 	elements, ok := row["elements"].([]interface{})
 	if ok == false {
+		return 0, errors.New(models.ErrorCalculateFailed)
+	}
+	if len(elements) == 0 {
 		return 0, errors.New(models.ErrorCalculateFailed)
 	}
 	element, ok := elements[0].(map[string]interface{})

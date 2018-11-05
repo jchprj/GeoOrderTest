@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/jchprj/GeoOrderTest/models"
@@ -15,7 +16,10 @@ var orders []*models.Order
 
 //InitMgr orders init
 func InitMgr() {
-	initMySQL()
+	if err := initMySQL(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 	selectAll()
 }
 

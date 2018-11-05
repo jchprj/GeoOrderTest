@@ -9,6 +9,7 @@ import (
 
 func TestSelect(t *testing.T) {
 	TestCreateEngine(t)
+	orders = nil
 	result, err := selectAll()
 	if err != nil {
 		t.Errorf("err %v", err)
