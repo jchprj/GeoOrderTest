@@ -5,9 +5,11 @@ This is an order test based on geographic coordinates. First place an order, the
 
 ## Deploy
 
+*Before run the shell script, please put Google Maps API key in `GoogleMapsAPIKey` in docker/config.yml*
+
 `start.sh`
 
-Tested under Ubuntu 18.04 LTS, start.sh will install Docker, and build a Docker image, and run the image.  
+Tested under Ubuntu 18.04 LTS with `root`, start.sh will install Docker, and build a Docker image, and run the image.  
 
 When building the Docker image, MySQL will be installed, database and table will be created.   
 
@@ -15,7 +17,7 @@ When running, port 8080 and 8081 will be mounted to the local system. The progre
 
 ### Config
 
-*MUST* Put Google Maps API key in config.yml under ThirdParty block:
+*MUST* put Google Maps API key in config.yml under ThirdParty block:
 
 `  GoogleMapsAPIKey: YourKey`
 

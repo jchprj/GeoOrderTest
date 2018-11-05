@@ -11,7 +11,7 @@
             "mode": "auto",
             "program": "${workspaceFolder}/main.go",
             "env": {},
-            "args": ["--logLevel", "debug", "--logStd", "true"]
+            "args": ["--config", "docker/config.yml", "--logLevel", "debug", "--logStd", "true"]
         }
     ]
 }
