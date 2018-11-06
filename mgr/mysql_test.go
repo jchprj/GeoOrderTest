@@ -11,7 +11,7 @@ import (
 )
 
 func TestCreateEngine(t *testing.T) {
-	cfg.InitConfig("../config.yml")
+	cfg.InitConfig("../docker/config.yml")
 	err := initMySQL()
 	if err != nil {
 		t.Errorf("init err %v", err)

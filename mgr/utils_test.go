@@ -46,7 +46,7 @@ func TestValidateLatLong(t *testing.T) {
 }
 
 func TestCalculateDistance(t *testing.T) {
-	cfg.InitConfig("../config.yml")
+	cfg.InitConfig("../docker/config.yml")
 	tt := struct {
 		start, end []string
 		expected   int

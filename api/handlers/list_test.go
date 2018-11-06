@@ -1,6 +1,7 @@
 package handlers_test
 
 import (
+	"flag"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
@@ -14,8 +15,10 @@ import (
 	"github.com/jchprj/GeoOrderTest/models"
 )
 
+var cfgFile = flag.String("config", "../../docker/config.yml", "config.yml file")
+
 func TestListHandler(t *testing.T) {
-	cfg.InitConfig("../../config.yml")
+	cfg.InitConfig("../../docker/config.yml")
 	mgr.InitMgr()
 	page := 3
 	limit := 10

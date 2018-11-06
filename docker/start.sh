@@ -10,6 +10,7 @@ go get -u -v github.com/jchprj/GeoOrderTest
 cd $GOPATH/src/github.com/jchprj/GeoOrderTest/docs
 sh gen.sh
 cd ../
+yes | cp /root/config.yml docker/config.yml
 echo start test
 go test ./...
 

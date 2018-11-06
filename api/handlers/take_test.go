@@ -18,7 +18,7 @@ import (
 
 //Parallel take same order for many times, count successful times through channel
 func TestTakeHandler(t *testing.T) {
-	cfg.InitConfig("../../config.yml")
+	cfg.InitConfig("../../docker/config.yml")
 	mgr.Test()
 	mgr.InitMgr()
 	fmt.Println("start: ")

@@ -23,7 +23,7 @@ func BenchmarkPlaceHandler(b *testing.B) {
 }
 
 func TestPlaceHandler(t *testing.T) {
-	cfg.InitConfig("../../config.yml")
+	cfg.InitConfig("../../docker/config.yml")
 	mgr.InitMgr()
 	autoID := mgr.GetCurrentAutoID()
 	t.Logf("start autoID: %v", autoID)
